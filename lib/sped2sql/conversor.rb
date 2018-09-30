@@ -33,6 +33,7 @@ module SPED2SQL
       dados = IO.read(fonte, encoding: 'ISO-8859-1').gsub("'", '"')
       row_count = 0
 
+      puts 'Iniciando o Parse'
       CSV.parse(dados, col_sep: '|', quote_char: "'") do |row|
         row_count += 1
         # pula linha se o registro nao existe no mapa
@@ -61,7 +62,6 @@ module SPED2SQL
 
         # Guarda em @errors as mensagens e pula para a próxima linha
         rescue => e
-          binding.pry
           @errors << "#{row_count} - #{e.message}"
         end
       end

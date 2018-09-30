@@ -1,0 +1,12 @@
+language: ruby
+bundler_args: --without development production
+addons:
+   code_climate:
+     repo_token: 41268a9678ee7e0de3e230820db477d1bf185a5bf366b7b9f16963b1cd619a4c
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.2
+branches:
+  only:
+    - master

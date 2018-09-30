@@ -52,6 +52,7 @@ module SPED2SQL
 
           @saida << pipe[:final]
           @memoria[linha.first] << pipe[:final]
+          puts "Processando #{row_count} - #{pipe[:final]}"
 
           # Para um arquivo completo do SPED, 9999 eh o ultimo registro.
           # termina a leitura do arquivo no registro 9999 evitando ler

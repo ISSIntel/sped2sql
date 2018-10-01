@@ -31,9 +31,9 @@ module SPED2SQL
 
     def converter!
       mapa  = Mapa.carrega!(@template)
+      @total_row = `wc -l "#{fonte}"`.strip.split(' ')[0].to_i
       dados = IO.read(fonte, encoding: 'ISO-8859-1').gsub("'", '"')
       row_count = 0
-      @total_row = dados.readlines.size
 
       puts 'Iniciando o Parse'
       CSV.parse(dados, col_sep: '|', quote_char: "'") do |row|

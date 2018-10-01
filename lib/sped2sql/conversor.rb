@@ -1,18 +1,19 @@
-require "pry"
 # -*- encoding: utf-8 -*-
 module SPED2SQL
   class Conversor < Pipeline::Base
     include Layout
 
-    attr_reader :fonte, :template, :saida, :memoria, :options, :errors
+    attr_reader :fonte, :template, :saida, :memoria, :options, :errors, :current_row, :total_row
 
     def initialize(fonte, template, options = {})
-      @fonte      = fonte
-      @template   = template.is_a?(Symbol) ? Mapa.arquivo_template(template) : template
-      @saida      = []
-      @memoria    = Hash.new { |k, v| k[v] = [] }
-      @options    = options
-      @errors     = []
+      @fonte        = fonte
+      @template     = template.is_a?(Symbol) ? Mapa.arquivo_template(template) : template
+      @saida        = []
+      @memoria      = Hash.new { |k, v| k[v] = [] }
+      @options      = options
+      @errors       = []
+      @current_row  = 0
+      @total_row    = 0
 
       valida_arquivo(@fonte)
       valida_arquivo(@template)
@@ -32,10 +33,12 @@ module SPED2SQL
       mapa  = Mapa.carrega!(@template)
       dados = IO.read(fonte, encoding: 'ISO-8859-1').gsub("'", '"')
       row_count = 0
+      @total_row = dados.readlines.size
 
       puts 'Iniciando o Parse'
       CSV.parse(dados, col_sep: '|', quote_char: "'") do |row|
         row_count += 1
+        @current_row = row_count
         # pula linha se o registro nao existe no mapa
         next unless mapa.has_key?(row[1])
 
@@ -53,7 +56,7 @@ module SPED2SQL
 
           @saida << pipe[:final]
           @memoria[linha.first] << pipe[:final]
-          puts "Processando #{row_count} - #{pipe[:final]}"
+          puts "Lendo CSV/TXT #{row_count} - #{pipe[:final]}"
 
           # Para um arquivo completo do SPED, 9999 eh o ultimo registro.
           # termina a leitura do arquivo no registro 9999 evitando ler
